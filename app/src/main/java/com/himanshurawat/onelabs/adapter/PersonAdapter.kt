@@ -14,7 +14,7 @@ import com.himanshurawat.onelabs.pojo.Person
 import org.jetbrains.anko.find
 
 class PersonAdapter(private val context: Context,
-                    private val dataList: List<Person>,
+                    private val dataList: MutableList<Person>,
                     private val listener: OnPersonClickListener) : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>()  {
 
 
