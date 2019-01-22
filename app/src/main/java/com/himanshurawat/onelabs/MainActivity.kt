@@ -1,50 +1,30 @@
 package com.himanshurawat.onelabs
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract
-import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.CursorLoader
-import androidx.loader.content.Loader
 import androidx.viewpager.widget.ViewPager
 import com.himanshurawat.onelabs.adapter.FragmentAdapter
 import com.himanshurawat.onelabs.pojo.Person
 import com.himanshurawat.onelabs.ui.activity.MainActivityContract
 import com.himanshurawat.onelabs.ui.activity.MainActivityPresenterImpl
-import com.himanshurawat.onelabs.ui.fragment.ViewContactFragment
+import com.himanshurawat.onelabs.ui.fragment.viewcontact.ViewContactFragment
 import com.himanshurawat.onelabs.ui.fragment.contact.ContactFragment
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.appcompat.v7.buttonBarLayout
-import org.jetbrains.anko.find
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 
 
-class MainActivity : AppCompatActivity(),MainActivityContract.View,ContactFragment.OnContactClickListener {
-    override fun onContactClick(person: Person) {
-        val tag = "android:switcher:${R.id.activity_main_view_pager}:1"
-        val fragment: ViewContactFragment? = supportFragmentManager.findFragmentByTag(tag) as ViewContactFragment?
-        fragment?.setPersonValue(person)
-        viewPager.currentItem = 1
-    }
-
-    override fun setDefaultContact(person: Person) {
-        val tag = "android:switcher:${R.id.activity_main_view_pager}:1"
-        val fragment: ViewContactFragment? = supportFragmentManager.findFragmentByTag(tag) as ViewContactFragment?
-        fragment?.setPersonValue(person)
-    }
+class MainActivity : AppCompatActivity(),
+    MainActivityContract.View,
+    ContactFragment.OnContactClickListener,
+    ViewContactFragment.OnViewContactClickListener{
 
 
     private lateinit var presenter: MainActivityContract.Presenter
-    //private val CONTACT_CONTRACT_ID = 1
     private val CONTACT_REQUEST_CODE = 7
-    //private val personList = mutableListOf<Person>()
     private lateinit var viewPager: ViewPager
     private lateinit var fragmentAdapter: FragmentAdapter
 
@@ -77,11 +57,6 @@ class MainActivity : AppCompatActivity(),MainActivityContract.View,ContactFragme
     override fun initLoader() {
         setup()
     }
-
-
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,5 +99,24 @@ class MainActivity : AppCompatActivity(),MainActivityContract.View,ContactFragme
         }else {
             super.onBackPressed()
         }
+    }
+
+    override fun onCallClick(phoneNumber: String) {
+        val number = Uri.parse("tel:$phoneNumber")
+        val callIntent = Intent(Intent.ACTION_DIAL,number)
+        startActivity(callIntent)
+    }
+
+    override fun onContactClick(person: Person) {
+        val tag = "android:switcher:${R.id.activity_main_view_pager}:1"
+        val fragment: ViewContactFragment? = supportFragmentManager.findFragmentByTag(tag) as ViewContactFragment?
+        fragment?.setPersonValue(person)
+        viewPager.currentItem = 1
+    }
+
+    override fun setDefaultContact(person: Person) {
+        val tag = "android:switcher:${R.id.activity_main_view_pager}:1"
+        val fragment: ViewContactFragment? = supportFragmentManager.findFragmentByTag(tag) as ViewContactFragment?
+        fragment?.setPersonValue(person)
     }
 }

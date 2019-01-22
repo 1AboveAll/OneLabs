@@ -1,5 +1,6 @@
-package com.himanshurawat.onelabs.ui.fragment
+package com.himanshurawat.onelabs.ui.fragment.viewcontact
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,13 +17,20 @@ import org.jetbrains.anko.find
 
 class ViewContactFragment: Fragment(){
 
-
-    private var person: Person? = null
-
     private lateinit var name: TextView
     private lateinit var iconImage: ImageView
     private lateinit var phoneNumber: TextView
     private lateinit var callButton: MaterialButton
+    private lateinit var listener: OnViewContactClickListener
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        try {
+            if(context != null){
+                listener = context as OnViewContactClickListener
+            }
+        }catch (e : Exception){}
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,23 +45,27 @@ class ViewContactFragment: Fragment(){
         phoneNumber = view.find(R.id.fragment_view_contact_phone_number_text_view)
         callButton = view.find(R.id.fragment_view_contact_call_button)
         iconImage = view.find(R.id.fragment_view_contact_icon_image_view)
-    }
+        callButton.visibility = View.INVISIBLE
 
-    override fun onResume() {
-        super.onResume()
-        //setVal(person)
     }
 
     private fun setVal(person: Person?) {
         if(person != null){
+            callButton.visibility = View.VISIBLE
             name.text = person.name
             phoneNumber.text = person.phoneNumber[0]
             Glide.with(context!!).load(R.drawable.person_icon_grey).apply(RequestOptions().circleCrop()).into(iconImage)
+            callButton.setOnClickListener {
+                listener.onCallClick(person.phoneNumber[0])
+            }
         }
     }
 
-
     fun setPersonValue(person: Person){
         setVal(person)
+    }
+
+    interface OnViewContactClickListener{
+        fun onCallClick(phoneNumber: String)
     }
 }

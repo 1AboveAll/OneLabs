@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 
 class MainActivityPresenterImpl(private val view: MainActivityContract.View): MainActivityContract.Presenter{
 
+
     override fun contactPermissionGranted() {
         view.initLoader()
     }
